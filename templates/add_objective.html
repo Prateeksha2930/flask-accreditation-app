@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center mt-4">Add New Objective</h2>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container d-flex justify-content-center">
+    <div class="col-md-6">
+        <form method="POST" action="{{ url_for('add_objective') }}" novalidate>
+            <div class="mb-3">
+                <label for="goal_id" class="form-label">Select Goal</label>
+                <select class="form-select" id="goal_id" name="goal_id" required onchange="updateObjectiveId()">
+                    <option value="" disabled selected>Select a Goal</option>
+                    {% for goal in goals %}
+                    <option value="{{ goal[0] }}">{{ goal[0] }} - {{ goal[1] }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">
+                    Please select a goal.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="objective_id" class="form-label">Objective ID (Auto-generated)</label>
+                <input type="text" class="form-control" id="objective_id" name="objective_id" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="objective_desc" class="form-label">Objective Description</label>
+                <input type="text" class="form-control" id="objective_desc" name="objective_desc" required>
+                <div class="invalid-feedback">
+                    Please provide an objective description.
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Add Objective</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    async function updateObjectiveId() {
+        const goalId = document.getElementById('goal_id').value;
+        if (!goalId) {
+            document.getElementById('objective_id').value = '';
+            return;
+        }
+        const response = await fetch(`/next_objective_id/${goalId}`);
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('objective_id').value = data.next_objective_id;
+        } else {
+            document.getElementById('objective_id').value = 'Error';
+        }
+    }
+
+    // Bootstrap 5 validation script
+    (() => {
+      'use strict'
+      const forms = document.querySelectorAll('form')
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+</script>
+{% endblock %}

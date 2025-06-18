@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Add New Rubric</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="objective_id" class="form-label">Select Objective</label>
+            <select class="form-select" id="objective_id" name="objective_id" required>
+                <option value="">-- Select Objective --</option>
+                {% for objective in objectives %}
+                <option value="{{ objective[0] }}">{{ objective[0] }} - {{ objective[1] }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please select an Objective.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="rubric_criteria" class="form-label">Rubric Criteria</label>
+            <input type="text" class="form-control" id="rubric_criteria" name="rubric_criteria" required>
+            <div class="invalid-feedback">Please provide rubric criteria.</div>
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Add Rubric</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Bootstrap validation
+(() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form =>
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false)
+    );
+})();
+</script>
+{% endblock %}

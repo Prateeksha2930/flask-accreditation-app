@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accreditation Dashboard</title>
+  <style>
+   body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('{{ url_for("static", filename="images/csuf_campus.jpg") }}') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  color: #fff;
+  text-align: center;
+  padding: 50px;
+}
+
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    header img {
+      height: 100px;
+      width: auto;
+    }
+
+      header h1 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 2.5rem;
+      font-weight: bpld;
+      
+    }
+
+    .nav-links {
+      display: inline-block;
+      text-align: left;
+      padding: 20px;
+      border: 1px solid #dcdcdc;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-links a {
+      display: block;
+      font-size: 18px;
+      color: #2980b9;
+      text-decoration: none;
+      margin: 10px 0;
+      padding: 8px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover {
+      background-color: #ecf0f1;
+      color: #1a5276;
+      border-radius: 5px;
+    }
+
+    footer {
+     margin-top: 50px;
+     font-size: 16px;
+     color: #444;
+     font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="{{ url_for('static', filename='images/csuf_logo.jpg') }}" alt="CSUF Logo" style="height:100px; width:auto ">
+    <h1>Accreditation Data Entry Portal</h1>
+  </header>
+
+  <div class="nav-links">
+    <a href="{{ url_for('add_program') }}">➕ Add Program</a>
+    <a href="{{ url_for('add_goal') }}">🎯 Add Goal</a>
+    <a href="{{ url_for('add_objective') }}">📌 Add Objective</a>
+    <a href="{{ url_for('add_rubric') }}">📋 Add Rubric</a>
+    <a href="{{ url_for('add_course') }}">🎓 Add Course</a>
+    <a href="{{ url_for('add_curriculum_map') }}">📖 Add Curriculum Map</a>
+    <a href="{{ url_for('add_student') }}">👤 Add Student</a>
+    <a href="{{ url_for('add_assessment') }}">📝 Add Assessment</a>
+  </div>
+
+  <footer>
+    &copy; {{ year }} Graduate Accreditation System | Developed with ❤️ at CSUF
+  </footer>
+</body>
+</html>

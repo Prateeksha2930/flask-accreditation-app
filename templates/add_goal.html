@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Add New Goal</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_goal') }}" class="needs-validation" novalidate>
+                        <!-- Program Dropdown -->
+                        <div class="mb-3">
+                            <label for="program_id" class="form-label">Select Program</label>
+                            <select class="form-select" id="program_id" name="program_id" required onchange="fetchGoalID()">
+                                <option value="">-- Select Program --</option>
+                                {% for program in programs %}
+                                <option value="{{ program.ProgramID }}">{{ program.ProgramID }} - {{ program.DepartmentName }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Please select a program.</div>
+                        </div>
+
+                        <!-- Auto-generated Goal ID -->
+                        <div class="mb-3">s
+                            <label for="goal_id" class="form-label">Goal ID</label>
+                            <input type="text" class="form-control" id="goal_id" name="goal_id" readonly required>
+                        </div>
+
+                        <!-- Goal Description -->
+                        <div class="mb-3">
+                            <label for="goal_description" class="form-label">Goal Description</label>
+                            <input type="text" class="form-control" id="goal_description" name="goal_description" placeholder="Enter goal description" required>
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Add Goal</button>
+                        </div>
+                    </form>
+
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="mt-4">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} text-center mb-0">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS: Dynamic GoalID fetch + Bootstrap validation -->
+<script>
+function fetchGoalID() {
+    const program = document.getElementById('program_id').value;
+    if (program) {
+        fetch(`/get_next_goal_id?program_id=${program}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('goal_id').value = data.goal_id;
+            });
+    } else {
+        document.getElementById('goal_id').value = '';
+    }
+}
+
+// Bootstrap client-side validation
+(() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}
+

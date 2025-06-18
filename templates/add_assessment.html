@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center mt-4">Add New Assessment</h2>
+
+<div class="container d-flex justify-content-center">
+    <div class="col-md-6">
+        <form method="POST" action="{{ url_for('add_assessment') }}" novalidate>
+            <div class="mb-3">
+                <label for="rubric_id" class="form-label">Select Rubric</label>
+                <select class="form-select" id="rubric_id" name="rubric_id" required>
+                    <option value="" disabled selected>Select a rubric</option>
+                    {% for rubric in rubrics %}
+                    <option value="{{ rubric[0] }}">{{ rubric[0] }} - {{ rubric[1] }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a rubric.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="student_id" class="form-label">Select Student</label>
+                <select class="form-select" id="student_id" name="student_id" required>
+                    <option value="" disabled selected>Select a student</option>
+                    {% for student in students %}
+                    <option value="{{ student }}">{{ student }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a student.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="course_id" class="form-label">Select Course</label>
+                <select class="form-select" id="course_id" name="course_id" required>
+                    <option value="" disabled selected>Select a course</option>
+                    {% for course in courses %}
+                    <option value="{{ course }}">{{ course }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a course.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="score" class="form-label">Score</label>
+                <select class="form-select" id="score" name="score" required>
+                    <option value="" disabled selected>Select a score</option>
+                    {% for i in range(1, 6) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a score.</div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Add Assessment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Bootstrap client-side validation
+(() => {
+  'use strict'
+  const forms = document.querySelectorAll('form')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center mt-4">Add New Program</h2>
+
+<!-- FLASH MESSAGE BLOCK -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container mb-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+<div class="container d-flex justify-content-center">
+    <div class="col-md-6">
+        <form method="POST" action="{{ url_for('add_program') }}">
+            <div class="mb-3">
+                <label for="program_code" class="form-label">Program Code (e.g. MSIS)</label>
+                <input type="text" class="form-control" id="program_code" name="program_code" required>
+            </div>
+            <div class="mb-3">
+                <label for="year" class="form-label">Academic Year (e.g. 2025)</label>
+                <input type="text" class="form-control" id="year" name="year" required>
+            </div>
+            <div class="mb-3">
+                <label for="department_name" class="form-label">Department Name</label>
+                <input type="text" class="form-control" id="department_name" name="department_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="director_faculty" class="form-label">Director Faculty</label>
+                <input type="text" class="form-control" id="director_faculty" name="director_faculty" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Add Program</button>
+            </div>
+        </form>
+
+        {% if message %}
+        <div class="alert alert-info mt-3 text-center">{{ message }}</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
