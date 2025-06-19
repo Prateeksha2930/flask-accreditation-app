@@ -1,9 +1,9 @@
 import os
 
 DB_CONFIG = {
-    'host': 'bwnvkv2ab4qmmcbbrzck-mysql.services.clever-cloud.com',
-    'user': 'uq4opqwn3bv3a',
-    'password': 'XyE0A2CDE1nMeKN7enbY',
-    'database': 'bwnvkv2ab4qmmcbbrzck',
-    'port': 3306
+    'host': os.getenv('MYSQL_ADDON_HOST'),
+    'user': os.getenv('MYSQL_ADDON_USER'),
+    'password': os.getenv('MYSQL_ADDON_PASSWORD'),
+    'database': os.getenv('MYSQL_ADDON_DB'),
+    'port': int(os.getenv('MYSQL_ADDON_PORT'))  # default to 3306 if not set
 }
