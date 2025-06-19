@@ -180,14 +180,14 @@ def insert_goals():
     ]
 
     try:
-        with connection.cursor() as cursor:
+        with conn.cursor() as cursor:
             insert_query = """
                 INSERT INTO GOAL (GoalID, ProgramID, GoalDescription)
                 VALUES (%s, %s, %s)
                 ON DUPLICATE KEY UPDATE GoalDescription = VALUES(GoalDescription)
             """
             cursor.executemany(insert_query, goal_data)
-        connection.commit()
+        conn.commit()
         return "GOAL data inserted successfully!"
     except Exception as e:
         return f"Error: {str(e)}"
@@ -195,58 +195,53 @@ def insert_goals():
 @app.route('/insert_objectives')
 def insert_objectives():
     try:
-        connection = pymysql.connect(
-            host=os.environ.get("DB_HOST"),
-            user=os.environ.get("DB_USER"),
-            password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME"),
-            port=int(os.environ.get("DB_PORT")),
-            cursorclass=pymysql.cursors.DictCursor
-        )
+        conn = get_connection()
+        cursor = conn.cursor()
 
-        with connection:
-            with connection.cursor() as cursor:
-                insert_query = """
-                INSERT INTO OBJECTIVE (ObjectiveID, GoalID, ObjDescription)
-                VALUES (%s, %s, %s)
-                """
-                objective_data = [
-                    ('A_O01', 'A_G01', 'Students will think critically and apply conceptual solutions to advanced accounting issues.'),
-                    ('A_O02', 'A_G02', 'Students will design and execute accounting research projects'),
-                    ('A_O03', 'A_G03', 'Students will exhibit effective written communication skills relevant to the accounting profession'),
-                    ('A_O04', 'A_G04', 'Students will exhibit effective oral communication skills relevant to the accounting profession'),
-                    ('A_O05', 'A_G05', 'Demonstrate the ability to identify ethical issues and to suggest appropriate courses of action for resolution.'),
-                    ('A_O06', 'A_G06', 'Student will understand concepts and applications related to accounting analytics'),
-                    ('A_O07', 'A_G07', 'Students will work effectively as part of a team'),
-                    ('A_O11', 'A_G11', 'Students will demonstrate the ability to think critically and apply solutions to advanced accounting issues.'),
-                    ('A_O12', 'A_G12', 'Students will design and execute Accounting research projects.'),
-                    ('A_O13', 'A_G13', 'Students will exhibit effective written communication skills relevant to the accounting profession.'),
-                    ('A_O14', 'A_G14', 'Students will exhibit effective oral communication skills relevant to the accounting profession.'),
-                    ('A_O15', 'A_G15', 'Students will demonstrate the ability to identify ethical issues and to suggest appropriate courses of action for resolution.'),
-                    ('A_O16', 'A_G16', 'Students Will Understand Concepts and Applications Related to Information Technology'),
-                    ('A_O17', 'A_G17', 'Students will understand concepts and applications related to accounting analytics.'),
-                    ('A_O18', 'A_G18', 'Students Will Demonstrate the Ability to Work Effectively as Part of a Team'),
-                    ('IS_O01', 'IS_G01', 'Demonstrate effective written communication skills'),
-                    ('IS_O11_1', 'IS_G11', 'Identify and summarize problems and opportunities'),
-                    ('IS_O11_2', 'IS_G11', 'Prepare a development plan'),
-                    ('IS_O11_3', 'IS_G11', 'Make logical and reasoned conclusions'),
-                    ('IS_O12_1', 'IS_G12', 'Identify data sources to extract data/information, integrate and prepare data for analysis'),
-                    ('IS_O12_2', 'IS_G12', 'Analyze data using appropriate design and methods'),
-                    ('IS_O12_3', 'IS_G12', 'Interpret, recommend and report business decisions'),
-                    ('IS_O13', 'IS_G13', 'Demonstrate effective written communication skills'),
-                    ('IT_O01', 'IT_G01', 'Demonstrate effective written communication skills'),
-                    ('IT_O11_1', 'IT_G11', 'Identify and summarize problems and opportunities'),
-                    ('IT_O11_2', 'IT_G11', 'Prepare a development plan'),
-                    ('IT_O11_3', 'IT_G11', 'Make logical and reasoned conclusions'),
-                    ('IT_O12_1', 'IT_G12', 'Identify data sources to extract data/information, integrate and prepare data for analysis'),
-                    ('IT_O12_2', 'IT_G12', 'Analyze data using appropriate design and methods'),
-                    ('IT_O12_3', 'IT_G12', 'Interpret, recommend and report business decisions'),
-                    ('IT_O13', 'IT_G13', 'Demonstrate effective written communication skills'),
-                    ('MBA_O01', 'MBA_G01', 'Students will be able to demonstrate an understanding of key functions of business enterprises'),
-                    ('MBA_O02', 'MBA_G01', 'Students will be able to evaluate business environment and opportunities with integrated knowledge from different business functional areas to set strategic directions')
-                ]
-                cursor.executemany(insert_query, objective_data)
-                connection.commit()
+        insert_query = """
+            INSERT INTO OBJECTIVE (ObjectiveID, GoalID, ObjDescription)
+            VALUES (%s, %s, %s)
+        """
+        objective_data = [
+            ('A_O01', 'A_G01', 'Students will think critically and apply conceptual solutions to advanced accounting issues.'),
+            ('A_O02', 'A_G02', 'Students will design and execute accounting research projects'),
+            ('A_O03', 'A_G03', 'Students will exhibit effective written communication skills relevant to the accounting profession'),
+            ('A_O04', 'A_G04', 'Students will exhibit effective oral communication skills relevant to the accounting profession'),
+            ('A_O05', 'A_G05', 'Demonstrate the ability to identify ethical issues and to suggest appropriate courses of action for resolution.'),
+            ('A_O06', 'A_G06', 'Student will understand concepts and applications related to accounting analytics'),
+            ('A_O07', 'A_G07', 'Students will work effectively as part of a team'),
+            ('A_O11', 'A_G11', 'Students will demonstrate the ability to think critically and apply solutions to advanced accounting issues.'),
+            ('A_O12', 'A_G12', 'Students will design and execute Accounting research projects.'),
+            ('A_O13', 'A_G13', 'Students will exhibit effective written communication skills relevant to the accounting profession.'),
+            ('A_O14', 'A_G14', 'Students will exhibit effective oral communication skills relevant to the accounting profession.'),
+            ('A_O15', 'A_G15', 'Students will demonstrate the ability to identify ethical issues and to suggest appropriate courses of action for resolution.'),
+            ('A_O16', 'A_G16', 'Students Will Understand Concepts and Applications Related to Information Technology'),
+            ('A_O17', 'A_G17', 'Students will understand concepts and applications related to accounting analytics.'),
+            ('A_O18', 'A_G18', 'Students Will Demonstrate the Ability to Work Effectively as Part of a Team'),
+            ('IS_O01', 'IS_G01', 'Demonstrate effective written communication skills'),
+            ('IS_O11_1', 'IS_G11', 'Identify and summarize problems and opportunities'),
+            ('IS_O11_2', 'IS_G11', 'Prepare a development plan'),
+            ('IS_O11_3', 'IS_G11', 'Make logical and reasoned conclusions'),
+            ('IS_O12_1', 'IS_G12', 'Identify data sources to extract data/information, integrate and prepare data for analysis'),
+            ('IS_O12_2', 'IS_G12', 'Analyze data using appropriate design and methods'),
+            ('IS_O12_3', 'IS_G12', 'Interpret, recommend and report business decisions'),
+            ('IS_O13', 'IS_G13', 'Demonstrate effective written communication skills'),
+            ('IT_O01', 'IT_G01', 'Demonstrate effective written communication skills'),
+            ('IT_O11_1', 'IT_G11', 'Identify and summarize problems and opportunities'),
+            ('IT_O11_2', 'IT_G11', 'Prepare a development plan'),
+            ('IT_O11_3', 'IT_G11', 'Make logical and reasoned conclusions'),
+            ('IT_O12_1', 'IT_G12', 'Identify data sources to extract data/information, integrate and prepare data for analysis'),
+            ('IT_O12_2', 'IT_G12', 'Analyze data using appropriate design and methods'),
+            ('IT_O12_3', 'IT_G12', 'Interpret, recommend and report business decisions'),
+            ('IT_O13', 'IT_G13', 'Demonstrate effective written communication skills'),
+            ('MBA_O01', 'MBA_G01', 'Students will be able to demonstrate an understanding of key functions of business enterprises'),
+            ('MBA_O02', 'MBA_G01', 'Students will be able to evaluate business environment and opportunities with integrated knowledge from different business functional areas to set strategic directions')
+        ]
+
+        cursor.executemany(insert_query, objective_data)
+        conn.commit()
+        cursor.close()
+        conn.close()
 
         return "Objectives inserted successfully!"
 
@@ -257,17 +252,11 @@ def insert_objectives():
 @app.route('/insert_rubrics')
 def insert_rubrics():
     try:
-        connection = pymysql.connect(
-            host=os.environ.get("DB_HOST"),
-            user=os.environ.get("DB_USER"),
-            password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME"),
-            port=int(os.environ.get("DB_PORT")),
-            cursorclass=pymysql.cursors.DictCursor
-        )
+        conn = get_connection()
+        cursor = conn.cursor()
 
-        with connection:
-            with connection.cursor() as cursor:
+        with conn:
+            with conn.cursor() as cursor:
                 insert_query = """
                 INSERT INTO RUBRIC (RubricID, ObjectiveID, Criteria, Result)
                 VALUES (%s, %s, %s, %s)
