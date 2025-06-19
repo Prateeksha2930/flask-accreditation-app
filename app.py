@@ -16,7 +16,9 @@ def index():
 
 @app.route('/add_program', methods=['GET', 'POST'])
 def add_program():
+    years = list(range(2019, 2061))  # 2061 is exclusive
     if request.method == 'POST':
+        
         program_code = request.form['program_code'].strip().upper()
         year = request.form['year'].strip()
         department_name = request.form['department_name'].strip()
@@ -43,7 +45,7 @@ def add_program():
 
         return redirect(url_for('add_program'))
 
-    return render_template('add_program.html')
+    return render_template('add_program.html', years = years)
 
 # after add_program...
 
@@ -312,15 +314,27 @@ def add_assessment():
     if request.method == "POST":
         rubric_id = request.form['rubric_id']
         student_id = request.form['student_id']
-        course_id = request.form['course_id']  # changed from course_code to course_id
+        course_id = request.form['course_id']
         score = request.form['score']
         
-        cursor.execute(
-            "INSERT INTO ASSESSMENT (RubricID, StudentID, CourseID, Score) VALUES (%s, %s, %s, %s)",
-            (rubric_id, student_id, course_id, score)
-        )
-        conn.commit()
-        flash("Assessment recorded.", "success")
+        # Check if the combination already exists
+        cursor.execute("""
+            SELECT * FROM ASSESSMENT 
+            WHERE StudentID = %s AND RubricID = %s AND CourseID = %s
+        """, (student_id, rubric_id, course_id))
+        
+        exists = cursor.fetchone()
+        
+        if exists:
+            flash("Assessment already exists for this Student, Rubric, and Course.", "warning")
+        else:
+            cursor.execute("""
+                INSERT INTO ASSESSMENT (RubricID, StudentID, CourseID, Score) 
+                VALUES (%s, %s, %s, %s)
+            """, (rubric_id, student_id, course_id, score))
+            conn.commit()
+            flash("Assessment added successfully!", "success")
+        
         return redirect(url_for('add_assessment'))
     
     cursor.close()

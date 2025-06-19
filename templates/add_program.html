@@ -22,7 +22,12 @@
                 <input type="text" class="form-control" id="program_code" name="program_code" required>
             </div>
             <div class="mb-3">
-                <label for="year" class="form-label">Academic Year (e.g. 2025)</label>
+               <label for="academic_year">Academic Year:</label>
+               <select class="form-control" id="academic_year" name="AcademicYear" required>
+               {% for year in years %}
+               <option value="{{ year }}">{{ year }}</option>
+               {% endfor %}
+               </select>
                 <input type="text" class="form-control" id="year" name="year" required>
             </div>
             <div class="mb-3">
