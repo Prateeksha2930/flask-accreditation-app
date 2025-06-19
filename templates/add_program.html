@@ -22,13 +22,15 @@
                 <input type="text" class="form-control" id="program_code" name="program_code" required>
             </div>
             <div class="mb-3">
-               <label for="academic_year">Academic Year:</label>
-               <select class="form-control" id="academic_year" name="AcademicYear" required>
-               {% for year in years %}
-               <option value="{{ year }}">{{ year }}</option>
-               {% endfor %}
-               </select>
-                <input type="text" class="form-control" id="year" name="year" required>
+            <label for="academic_year" class="form-label">Academic Year</label>
+            <select class="form-control" id="academic_year" name="year">
+            <option value="">-- Select Year --</option>
+            {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+            </select>
+            <div class="form-text text-muted mt-1 mb-1 text-center">OR</div>
+            <input type="text" class="form-control" id="year_input" name="year_input" placeholder="Enter new year (e.g., 2061)" pattern="^[0-9]{4}$">
             </div>
             <div class="mb-3">
                 <label for="department_name" class="form-label">Department Name</label>
@@ -41,6 +43,23 @@
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Add Program</button>
             </div>
+
+          <script>
+        document.querySelector("form").addEventListener("submit", function (e) {
+        const dropdown = document.getElementById("academic_year");
+        const textbox = document.getElementById("year_input");
+
+        if (!dropdown.value && !textbox.value) {
+            alert("Please select or enter an academic year.");
+            e.preventDefault();
+        } else if (textbox.value) {
+            // Copy new year to the expected field name
+            dropdown.name = ""; // ignore this field
+            textbox.name = "year"; // expected by Flask
+        }
+       });
+     </script>
+
         </form>
 
         {% if message %}

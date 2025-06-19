@@ -14,18 +14,23 @@ def index():
     # Show some info or main page
     return render_template('index.html')
 
+
 @app.route('/add_program', methods=['GET', 'POST'])
 def add_program():
-    years = list(range(2019, 2061))  # 2061 is exclusive
+    years = list(range(2019, 2061))
+
     if request.method == 'POST':
-        
         program_code = request.form['program_code'].strip().upper()
         year = request.form['year'].strip()
         department_name = request.form['department_name'].strip()
         director_faculty = request.form['director_faculty'].strip()
 
+        # Validate year format (4-digit year between 2000 and 2099)
+        if not year.isdigit() or not (2000 <= int(year) <= 2099):
+            flash("Invalid year format. Please enter a 4-digit year between 2000 and 2099.", "danger")
+            return redirect(url_for('add_program'))
 
-        program_id = f"{program_code}_{year[-2:]}"  # same ID logic
+        program_id = f"{program_code}_{year[-2:]}"
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -35,8 +40,10 @@ def add_program():
         if exists:
             flash(f"Program {program_id} already exists!", "warning")
         else:
-            cursor.execute("INSERT INTO PROGRAM (ProgramID, AcademicYear, DepartmentName, DirectorFaculty) VALUES (%s, %s, %s, %s)",
-                           (program_id, year, department_name, director_faculty))
+            cursor.execute("""
+                INSERT INTO PROGRAM (ProgramID, AcademicYear, DepartmentName, DirectorFaculty)
+                VALUES (%s, %s, %s, %s)
+            """, (program_id, year, department_name, director_faculty))
             conn.commit()
             flash(f"Program {program_id} added successfully.", "success")
 
@@ -45,7 +52,7 @@ def add_program():
 
         return redirect(url_for('add_program'))
 
-    return render_template('add_program.html', years = years)
+    return render_template('add_program.html', years=years)
 
 # after add_program...
 
