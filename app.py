@@ -14,6 +14,110 @@ def index():
     # Show some info or main page
     return render_template('index.html')
 
+@app.route('/init-db')
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Step 1: PROGRAM table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS PROGRAM (
+            ProgramID VARCHAR(50) PRIMARY KEY,
+            AcademicYear YEAR,
+            DepartmentName VARCHAR(100),
+            DirectorFaculty VARCHAR(100)
+        )
+        """)
+
+        # Step 2: GOAL table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS GOAL (
+            GoalID VARCHAR(100) PRIMARY KEY,
+            ProgramID VARCHAR(50),
+            GoalDescription TEXT,
+            FOREIGN KEY (ProgramID) REFERENCES PROGRAM(ProgramID)
+        )
+        """)
+
+        # Step 3: OBJECTIVE table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS OBJECTIVE (
+            ObjectiveID VARCHAR(100) PRIMARY KEY,
+            GoalID VARCHAR(100),
+            ObjDescription TEXT,
+            FOREIGN KEY (GoalID) REFERENCES GOAL(GoalID)
+        )
+        """)
+
+        # Step 4: COURSE table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS COURSE (
+            CourseID VARCHAR(50) PRIMARY KEY,
+            CourseName VARCHAR(100)
+        )
+        """)
+
+        # Step 5: CURRICULUM_MAP table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS CURRICULUM_MAP (
+            MapID VARCHAR(100) PRIMARY KEY,
+            ObjectiveID VARCHAR(100),
+            CourseID VARCHAR(50),
+            Levels VARCHAR(50),
+            FOREIGN KEY (ObjectiveID) REFERENCES OBJECTIVE(ObjectiveID),
+            FOREIGN KEY (CourseID) REFERENCES COURSE(CourseID)
+        )
+        """)
+
+        # Step 6: RUBRIC table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS RUBRIC (
+            RubricID VARCHAR(100) PRIMARY KEY,
+            ObjectiveID VARCHAR(100),
+            Criteria VARCHAR(255),
+            Result ENUM('Met', 'In Use', 'Not Met'),
+            FOREIGN KEY (ObjectiveID) REFERENCES OBJECTIVE(ObjectiveID)
+        )
+        """)
+
+        # Step 7: STUDENT table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS STUDENT (
+            StudentID VARCHAR(50) PRIMARY KEY,
+            FirstName VARCHAR(50),
+            LastName VARCHAR(50),
+            Email VARCHAR(100) UNIQUE,
+            EnrollmentYear YEAR
+        )
+        """)
+
+        # Step 8: ASSESSMENT table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ASSESSMENT (
+            StudentID VARCHAR(50),
+            RubricID VARCHAR(100),
+            CourseID VARCHAR(50),
+            Score DECIMAL(5,2),
+            PRIMARY KEY (StudentID, RubricID, CourseID),
+            FOREIGN KEY (StudentID) REFERENCES STUDENT(StudentID),
+            FOREIGN KEY (RubricID) REFERENCES RUBRIC(RubricID),
+            FOREIGN KEY (CourseID) REFERENCES COURSE(CourseID)
+        )
+        """)
+
+        conn.commit()
+        return "✅ All database tables created successfully!"
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error creating tables: {e}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 @app.route('/add_program', methods=['GET', 'POST'])
 def add_program():
     if request.method == 'POST':
@@ -332,4 +436,4 @@ def add_assessment():
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
